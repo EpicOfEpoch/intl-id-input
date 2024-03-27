@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>International Identity Input</title>
+    <link rel="stylesheet" href="src/css/intlIdInput.css" />
+    <link rel="stylesheet" href="src/css/test.css" />
+  </head>
+
+  <body>
+    <h1>International Identity Input</h1>
+    <form>
+      <input id="identity" name="identity" type="text" value="" />
+      <button type="submit">Submit</button>
+    </form>
+
+    <script src="src/js/intlIdInput.js"></script>
+    <script>
+      var input = document.querySelector("#identity");
+      window.intlIdInput(input, {
+        // allowDropdown: false,
+        // countrySearch: false,
+        onlyCountries: ["ZA","BW","LS","NA","SZ"],
+        initialCountry: "ZA",
+      });
+    </script>
+  </body>
+</html>
