@@ -255,7 +255,6 @@
                     } else {
                         this.countries = allCountries;
                     }
-                    console.log(this.countries);
                 }
             }, {
                 key: "_countryNameSort",
@@ -966,26 +965,14 @@
                     delete window.intlIdInputGlobals.instances[this.id];
                 }
             }, {
-                key: "getExtension",
-                value: function getExtension() {
-                    if (window.intlidInputUtils) {
-                        return intlidInputUtils.getExtension(this._getFullNumber(), this.selectedCountryData.iso2);
-                    }
-                    return "";
-                }
-            }, {
                 key: "getSelectedCountryData",
                 value: function getSelectedCountryData() {
                     return this.selectedCountryData;
                 }
             }, {
-                key: "getValidationError",
-                value: function getValidationError() {
-                    if (window.intlidInputUtils) {
-                        var iso2 = this.selectedCountryData.iso2;
-                        return intlidInputUtils.getValidationError(this._getFullNumber(), iso2);
-                    }
-                    return -99;
+                key: "isValid",
+                value: function isValid() {
+                    return validate(this.idInput.value, this.selectedCountryData.iso2)
                 }
             }, {
                 key: "setCountry",
@@ -1020,4 +1007,122 @@
             return iii;
         };
     }();
+});
+//Validation section
+function validate(val, iso2){
+    try{
+        const ruleset = validationRuleset[iso2];
+    
+        if(ruleset.numeric){
+            if(isNaN(parseFloat(val)) || !isFinite(val)){
+                return false;
+            }
+        }
+    
+        if(ruleset.minLength){
+            const length = val.length;
+            if(length < ruleset.minLength || length > ruleset.minLength + ruleset.lengthDelta){
+                return false;
+            }
+        }
+    
+        if(ruleset.dateFormat){
+            if(!dateValidation(val.substr(ruleset.dateIndex, ruleset.dateLength), ruleset.dateFormat)){
+                return false;
+            }
+        }
+    
+        if(ruleset.specialValidation){
+            if(!specialValidation(val, ruleset.specialValidation)){
+                return false;
+            }
+        }
+    }
+    catch(error){
+        return false;
+    }
+
+    return true;
+}
+function dateValidation(val, format, dob = null){
+    switch(format.toLowerCase()){
+        case 'yymmdd':
+            const year20 = parseInt(val.substr(0, 2)) + 1900; //20th century year
+            const year21 = year20 + 100; //21st century year
+            const month = parseInt(val.substr(2, 2)) - 1;
+            const day = parseInt(val.substr(4, 2));
+
+            const date20 = new Date(year20, month, day);
+            const date21 = new Date(year21, month, day);
+
+            if (isNaN(date20.getTime()) && isNaN(date21.getTime())) {
+                return false;
+            }
+
+            if (date20.getMonth() !== month && date21.getMonth() !== month) {
+                return false;
+            }
+            
+            if(dob){
+                //check that either date20 or date21 match the specified dob
+            }
+
+            return true;
+    }
+}
+function specialValidation(val, specialCase){
+    switch (specialCase) {
+        case 'SZ_checksum':
+        case 'ZA_checksum':
+            let oddCheck = 0;
+            let evenResultAdd = 0;
+    
+            for (let i = 0; i < 12; i += 2) {
+                oddCheck += parseInt(val[i]);
+            }
+            
+            let evenCheckNum = '';
+            for (let i = 1; i < 12; i += 2) {
+                evenCheckNum += val[i];
+            }
+            
+            evenCheckNum = parseInt(evenCheckNum) * 2;
+            evenCheckNum.toString().split('').forEach(digit => evenResultAdd += parseInt(digit));
+            
+            let addChecks = oddCheck + evenResultAdd;
+            
+            let lastDigitCheck = 10 - (addChecks % 10);
+            
+            if (lastDigitCheck >= 10) {
+                lastDigitCheck %= 10;
+            }
+            
+            return lastDigitCheck === parseInt(val[12]);
+        default:
+            return false;
+    }  
+}
+//Validation rules in the following order:
+// iso2 code, numeric, minimum length, difference to maximum length, dateFormat, dateIndex, dateLength, special validation cases
+const validationRulesets = [ 
+    [ "bw", true, 9, 0, "yyMMdd", 0, 6, null ], 
+    [ "sz", true, 13, 0, "yyMMdd", 0, 6, "SZ_checksum" ], 
+    [ "ls", true, 12, 0, null, null, null, null ], 
+    [ "na", true, 11, 0, "yyMMdd", 0, 6, null ], 
+    [ "za", true, 13, 0, "yyMMdd", 0, 6, "ZA_checksum" ] 
+];
+
+const validationRuleset = {};
+validationRulesets.forEach(item => {
+    const iso2 = item[0];
+    const values = {
+        numeric: item[1],
+        minLength: item[2],
+        lengthDelta: item[3],
+        dateFormat: item[4],
+        dateIndex: item[5],
+        dateLength: item[6],
+        specialValidation: item[7]
+    };
+    validationRuleset[iso2] = values;
 });

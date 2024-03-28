@@ -12,13 +12,13 @@
     <h1>International Identity Input</h1>
     <form>
       <input id="identity" name="identity" type="text" value="" />
-      <button type="submit">Submit</button>
+      <button type="button" onclick="console.log(iii.isValid() ? 'valid' : 'invalid')">Validate</button>
     </form>
 
     <script src="src/js/intlIdInput.js"></script>
     <script>
       var input = document.querySelector("#identity");
-      window.intlIdInput(input, {
+      let iii = window.intlIdInput(input, {
         // allowDropdown: false,
         // countrySearch: false,
         onlyCountries: ["ZA","BW","LS","NA","SZ"],
