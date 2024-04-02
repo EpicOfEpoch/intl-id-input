@@ -1105,7 +1105,7 @@ function specialValidation(val, specialCase){
 //Validation rules in the following order:
 // iso2 code, numeric, minimum length, difference to maximum length, dateFormat, dateIndex, dateLength, special validation cases
 const validationRulesets = [ 
-    [ "bw", true, 9, 0, "yyMMdd", 0, 6, null ], 
+    [ "bw", true, 9, 0, null, null, null, null ], 
     [ "sz", true, 13, 0, "yyMMdd", 0, 6, "SZ_checksum" ], 
     [ "ls", true, 12, 0, null, null, null, null ], 
     [ "na", true, 11, 0, "yyMMdd", 0, 6, null ], 
