@@ -1013,6 +1013,10 @@ function validate(val, iso2){
     try{
         const ruleset = validationRuleset[iso2];
     
+        if (!ruleset) {
+            throw new Error(`Ruleset not found for ISO2: ${iso2}`);
+        }
+
         if(ruleset.numeric){
             if(isNaN(parseFloat(val)) || !isFinite(val)){
                 return false;
@@ -1039,6 +1043,7 @@ function validate(val, iso2){
         }
     }
     catch(error){
+        console.error(error.message);
         return false;
     }
 
