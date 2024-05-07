@@ -171,6 +171,8 @@
             initialCountry: "",
             // display only these countries
             onlyCountries: [],
+            // bypass validation for these countries
+            bypassValidationForCountries: [],
             // use full screen popup instead of dropdown for country list
             useFullscreenPopup: typeof navigator !== "undefined" && typeof window !== "undefined" ? // we cannot just test screen size as some smartphones/website meta tags will report desktop
             // resolutions
@@ -223,7 +225,7 @@
                     // in various situations there could be no country selected initially, but we need to be able
                     // to assume this variable exists
                     this.selectedCountryData = {};
-                    // process all the data: onlyCountries, excludeCountries, preferredCountries etc
+                    // process all the data: onlyCountries, excludeCountries, bypassValidationForCountries etc
                     this._processCountryData();
                     // generate the markup
                     this._generateMarkup();
@@ -972,6 +974,10 @@
             }, {
                 key: "isValid",
                 value: function isValid() {
+                    if(this.options.bypassValidationForCountries.length && this.options.bypassValidationForCountries.includes(this.selectedCountryData.iso2.toUpperCase())){
+                        return true;
+                    }
+
                     return validate(this.idInput.value, this.selectedCountryData.iso2)
                 }
             }, {
@@ -989,8 +995,8 @@
             return Iii;
         }();
         /********************
- *  STATIC METHODS
- ********************/
+        *  STATIC METHODS
+        ********************/
         // get the country data object
         intlIdInputGlobals.getCountryData = function() {
             return allCountries;
