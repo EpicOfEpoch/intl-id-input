@@ -470,8 +470,6 @@
                         }
                         if (this.hiddenInputCountry) {
                           this.hiddenInputCountry.value = this.selectedCountryData.iso2 || "";
-                          console.log(this.hiddenInputCountry.value);
-                          console.log(document.getElementById("formId"));
                         }
                         debugger;
                     };
