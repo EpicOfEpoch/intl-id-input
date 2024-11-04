@@ -1017,7 +1017,7 @@
             }, {
                 key: "getNumber",
                 value: function getNumber() {
-                    return this.telInput.value;
+                    return this.idInput.value;
                 }
             }, {
                 key: "getSelectedCountryData",
