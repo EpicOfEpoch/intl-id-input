@@ -1015,6 +1015,11 @@
                     delete window.intlIdInputGlobals.instances[this.id];
                 }
             }, {
+                key: "getNumber",
+                value: function getNumber() {
+                    return this.telInput.value;
+                }
+            }, {
                 key: "getSelectedCountryData",
                 value: function getSelectedCountryData() {
                     return this.selectedCountryData;
