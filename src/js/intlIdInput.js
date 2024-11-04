@@ -809,7 +809,7 @@
             }, {
                 key: "_updateValFromNumber",
                 value: function _updateValFromNumber(number) {
-                    this.telInput.value = number;
+                    this.idInput.value = number;
                 }
             }, {
                 key: "_startsWith",
