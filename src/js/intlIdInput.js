@@ -807,6 +807,11 @@
                     }
                 }
             }, {
+                key: "_updateValFromNumber",
+                value: function _updateValFromNumber(number) {
+                    this.telInput.value = number;
+                }
+            }, {
                 key: "_startsWith",
                 value: function _startsWith(a, b) {
                     return a.substr(0, b.length).toLowerCase() === b;
@@ -1033,6 +1038,11 @@
                         this._updateDialCode(this.selectedCountryData.dialCode);
                         this._triggerCountryChange();
                     }
+                }
+            }, {
+                key: "setNumber",
+                value: function setNumber(number) {
+                    this._updateValFromNumber(number);
                 }
             } ]);
             return Iii;
