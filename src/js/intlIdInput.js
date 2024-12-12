@@ -167,6 +167,8 @@
             allowDropdown: true,
             // add a country search input at the top of the dropdown
             countrySearch: true,
+            // Inject a hidden input with the name returned from this function, and on submit, populate it with the result of iso2.
+            hiddenInput: null,
             // initial country
             initialCountry: "",
             // display only these countries
@@ -295,7 +297,7 @@
                     if (!this.idInput.hasAttribute("autocomplete") && !(this.idInput.form && this.idInput.form.hasAttribute("autocomplete"))) {
                         this.idInput.setAttribute("autocomplete", "off");
                     }
-                    var _this$options = this.options, allowDropdown = _this$options.allowDropdown, useFullscreenPopup = _this$options.useFullscreenPopup, countrySearch = _this$options.countrySearch;
+                    var _this$options = this.options, allowDropdown = _this$options.allowDropdown, useFullscreenPopup = _this$options.useFullscreenPopup, countrySearch = _this$options.countrySearch, hiddenInput = _this$options.hiddenInput;
                     // containers (mostly for positioning)
                     var parentClass = "iii";
                     if (allowDropdown) {
@@ -379,6 +381,24 @@
                         }
                         this.flagsContainer.appendChild(this.dropdownContent);
                     }
+                    if (hiddenInput) {
+                        const idInputName = this.idInput.getAttribute("name") || "";
+                        const names = hiddenInput(idInputName);
+                        if (names.id) {
+                          this.hiddenInput = this._createEl("input", {
+                            type: "hidden",
+                            name: names.id
+                          });
+                          wrapper.appendChild(this.hiddenInput);
+                        }
+                        if (names.country) {
+                          this.hiddenInputCountry = this._createEl("input", {
+                            type: "hidden",
+                            name: names.country
+                          });
+                          wrapper.appendChild(this.hiddenInputCountry);
+                        }
+                    }
                 }
             }, {
                 key: "_appendListItems",
@@ -437,6 +457,26 @@
                     if (this.options.allowDropdown) {
                         this._initDropdownListeners();
                     }
+                    if ((this.hiddenInput || this.hiddenInputCountry) && this.idInput.form) {
+                        this._initHiddenInputListener();
+                    }
+                }
+            }, {
+                key: "_initHiddenInputListener",
+                value: function _initHiddenInputListener() {
+                    this._handleHiddenInputSubmit = () => {
+                        if (this.hiddenInput) {
+                          this.hiddenInput.value = this.selectedCountryData.iso2;
+                        }
+                        if (this.hiddenInputCountry) {
+                          this.hiddenInputCountry.value = this.selectedCountryData.iso2 || "";
+                        }
+                        debugger;
+                    };
+                    this.idInput.form?.addEventListener(
+                        "submit",
+                        this._handleHiddenInputSubmit
+                    );
                 }
             }, {
                 key: "_initDropdownListeners",
@@ -767,6 +807,11 @@
                     }
                 }
             }, {
+                key: "_updateValFromNumber",
+                value: function _updateValFromNumber(number) {
+                    this.idInput.value = number;
+                }
+            }, {
                 key: "_startsWith",
                 value: function _startsWith(a, b) {
                     return a.substr(0, b.length).toLowerCase() === b;
@@ -956,6 +1001,9 @@
                             label.removeEventListener("click", this._handleLabelClick);
                         }
                     }
+                    if (this._handleHiddenInputSubmit && this.idInput) {
+                        this.idInput.removeEventListener("submit", this._handleHiddenInputSubmit);
+                    }
                     // unbind key events, and cut/paste events
                     this.idInput.removeEventListener("input", this._handleKeyEvent);
                     // remove attribute of id instance: data-intl-id-input-id
@@ -965,6 +1013,11 @@
                     wrapper.parentNode.insertBefore(this.idInput, wrapper);
                     wrapper.parentNode.removeChild(wrapper);
                     delete window.intlIdInputGlobals.instances[this.id];
+                }
+            }, {
+                key: "getNumber",
+                value: function getNumber() {
+                    return this.idInput.value;
                 }
             }, {
                 key: "getSelectedCountryData",
@@ -990,6 +1043,11 @@
                         this._updateDialCode(this.selectedCountryData.dialCode);
                         this._triggerCountryChange();
                     }
+                }
+            }, {
+                key: "setNumber",
+                value: function setNumber(number) {
+                    this._updateValFromNumber(number);
                 }
             } ]);
             return Iii;
@@ -1056,8 +1114,8 @@ function validate(val, iso2){
     return true;
 }
 function dateValidation(val, format, dob = null){
-    switch(format.toLowerCase()){
-        case 'yymmdd':
+    switch(format){
+        case 'yyMMdd':
             const year20 = parseInt(val.substr(0, 2)) + 1900; //20th century year
             const year21 = year20 + 100; //21st century year
             const month = parseInt(val.substr(2, 2)) - 1;

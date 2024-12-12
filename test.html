@@ -10,9 +10,10 @@
 
   <body>
     <h1>International Identity Input</h1>
-    <form>
+    <form id="formId">
+      <input id="iso2" type="text" value="" hidden/>
       <input id="identity" name="identity" type="text" value="" />
-      <button type="button" onclick="console.log(iii.isValid() ? 'valid' : 'invalid')">Validate</button>
+      <button type="submit" onclick="console.log(iii.isValid() ? 'valid' : 'invalid')">Validate</button>
     </form>
 
     <script src="src/js/intlIdInput.js"></script>
@@ -23,7 +24,12 @@
         // countrySearch: false,
         onlyCountries: ["ZA","BW","LS","NA","SZ","US"],
         initialCountry: "ZA",
-        bypassValidationForCountries: ["ZA"]
+        bypassValidationForCountries: ["ZA"],
+        hiddenInput: function (){
+          return {
+            country: "iso2"
+          };
+        }
       });
     </script>
   </body>
