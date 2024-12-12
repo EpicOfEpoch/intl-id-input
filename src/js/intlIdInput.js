@@ -1109,6 +1109,9 @@ function specialValidation(val, specialCase){
             }
             
             return lastDigitCheck === parseInt(val[12]);
+        case 'ZW_formatValidation':
+            const regex = /^\d{2}-\d{5,6}\s?[A-Z]\s?\d{2}$/;
+            return regex.test(val);
         default:
             return false;
     }  
@@ -1120,7 +1123,8 @@ const validationRulesets = [
     [ "sz", true, 13, 0, "yyMMdd", 0, 6, "SZ_checksum" ], 
     [ "ls", true, 12, 0, null, null, null, null ], 
     [ "na", true, 11, 0, "yyMMdd", 0, 6, null ], 
-    [ "za", true, 13, 0, "yyMMdd", 0, 6, "ZA_checksum" ] 
+    [ "za", true, 13, 0, "yyMMdd", 0, 6, "ZA_checksum" ] ,
+    [ "zw", false, 11, 4, null, null, null, "ZW_formatValidation"]
 ];
 
 const validationRuleset = {};
