@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>International Identity Input</title>
+    <link rel="stylesheet" href="src/css/intlIdInput.css" />
+    <link rel="stylesheet" href="src/css/test.css" />
+
+    <script src="dist/bundle.js" defer></script>
+    <script defer>
+      function validate() {
+        const input = document.querySelector("#identity");
+        const value = input.value;
+        const result = isValid(value, "ZA");
+        console.log(result);
+        return result;
+      }
+    </script>
+  </head>
+
+  <body>
+    <h1>International Identity Input</h1>
+    <form>
+      <input id="identity" name="identity" type="text" value="" />
+      <button
+        type="button"
+        onclick="console.log(validate() ? 'valid' : 'invalid')"
+      >
+        Validate
+      </button>
+    </form>
+  </body>
+</html>
