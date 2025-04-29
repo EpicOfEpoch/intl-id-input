@@ -175,6 +175,8 @@
             onlyCountries: [],
             // bypass validation for these countries
             bypassValidationForCountries: [],
+            // pass validation if there is no ruleset loaded for the selected country
+            ignoreRulesetNotFound: false,
             // use full screen popup instead of dropdown for country list
             useFullscreenPopup: typeof navigator !== "undefined" && typeof window !== "undefined" ? // we cannot just test screen size as some smartphones/website meta tags will report desktop
             // resolutions
@@ -471,7 +473,6 @@
                         if (this.hiddenInputCountry) {
                           this.hiddenInputCountry.value = this.selectedCountryData.iso2 || "";
                         }
-                        debugger;
                     };
                     this.idInput.form?.addEventListener(
                         "submit",
@@ -1031,7 +1032,7 @@
                         return true;
                     }
 
-                    return validate(this.idInput.value, this.selectedCountryData.iso2)
+                    return validate(this.idInput.value, this.selectedCountryData.iso2, this.options)
                 }
             }, {
                 key: "setCountry",
@@ -1073,11 +1074,14 @@
     }();
 });
 //Validation section
-function validate(val, iso2){
+function validate(val, iso2, options){
     try{
         const ruleset = validationRuleset[iso2];
-    
-        if (!ruleset) {
+        
+        if (!ruleset && options.ignoreRulesetNotFound){
+            return true;
+        }
+        else if (!ruleset) {
             throw new Error(`Ruleset not found for ISO2: ${iso2}`);
         }
 
@@ -1168,7 +1172,7 @@ function specialValidation(val, specialCase){
             
             return lastDigitCheck === parseInt(val[12]);
         case 'ZW_formatValidation':
-            const regex = /^\d{2}-\d{6,7}\s?[A-Za-z]\s?\d{2}$/;
+            const regex = /^\d{2}-\d{6,7}[ -]?[A-Za-z][ -]?\d{2}$/;
             return regex.test(val);
         default:
             return false;
