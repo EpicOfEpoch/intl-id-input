@@ -22,13 +22,27 @@
       let iii = window.intlIdInput(input, {
         // allowDropdown: false,
         // countrySearch: false,
-        onlyCountries: ["ZA","BW","LS","NA","SZ","US","ZW"],
+        //onlyCountries: ["ZA","BW","LS","NA","SZ","US","ZW"],
+        ignoreRulesetNotFound: true,
         initialCountry: "ZA",
-        bypassValidationForCountries: ["ZA"],
+        bypassValidationForCountries: ["BW"],
         hiddenInput: function (){
           return {
             country: "iso2"
           };
+        }
+      });
+
+      var form = document.querySelector("#formId");
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        console.log(iii.getNumber());
+        console.log(iii.getSelectedCountryData());
+        console.log(iii.isValid() ? "valid" : "invalid");
+        if(iii.isValid()) {
+          alert("valid");
+        } else {
+          alert("invalid");
         }
       });
     </script>
